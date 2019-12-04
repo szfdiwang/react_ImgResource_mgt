@@ -265,9 +265,11 @@ export default class Base extends React.Component {
     };
     imgApi.queryOptions(data).then(res => {
       console.log(res);
-      this.setState({
-        // websiteNameOptions: [...res.data.data]
-      });
+      if (res.data.respCode === 0) {
+        this.setState({
+          websiteNameOptions: [...res.data.data]
+        });
+      }
     });
   }
   initTable(value) {

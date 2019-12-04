@@ -67,7 +67,8 @@
   "scripts": {
     "dev": "cross-env PORT=8888 node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "build:sit": "node scripts/sit.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -84,8 +85,10 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {},
-  "proxy": "http://10.10.8.61:8080",
+  "devDependencies": {
+    "dotenv-cli": "^3.1.0"
+  },
+  "proxy": "http://10.10.8.61:8000",
   "jest": {
     "roots": [
       "<rootDir>/src"

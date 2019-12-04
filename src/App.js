@@ -4,6 +4,7 @@ import Header from "./components/Header/index.jsx";
 import Nav from "./components/Nav/index.jsx";
 class App extends Component {
   render(props) {
+    window._ROUTER = this.props.history;
     return (
       <Row className="base_warp">
         <Header />

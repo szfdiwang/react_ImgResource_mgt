@@ -10,7 +10,6 @@ class Login extends Component {
   }
   submitFn(obj) {
     this.props.form.validateFields((err, values) => {
-      this.props.history.push("/imgMgt");
       if (!err) {
         let data = {
           userName: obj.username,
