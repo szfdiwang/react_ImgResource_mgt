@@ -6,6 +6,9 @@ axios.defaults.headers["content-Type"] = "application/json;charset=UTF-8";
 axios.defaults.baseURL = process.env.VUE_APP_BASEURL; // process.env.NODE_ENV == "production" ? : '/apis';
 axios.interceptors.request.use(
   config => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("我们在开发环境中");
+    }
     return config;
   },
   err => {
@@ -32,7 +35,6 @@ axios.interceptors.response.use(
     return response;
   },
   error => {
-    let errorMsg = "内部错误，请联系管理员！";
     if (count === 0) {
       count++;
     }

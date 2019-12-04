@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Modal } from "antd";
+import { Modal, message } from "antd";
 import defaultImg from "../../assets/img/ddys.jpg";
 import "./index.scss";
 
@@ -18,10 +18,15 @@ class imgModal extends Component {
   render() {
     console.log(this.state);
     let { preImgObject } = this.props;
-    let cururl = preImgObject ? preImgObject.img_url : defaultImg;
-    // const imgurl = {
-    //   img: require(cururl)
-    // };
+    let cururl; //= preImgObject ? preImgObject.img_url : defaultImg;
+    if (preImgObject) {
+      if (!!preImgObject.imgUrl) {
+        cururl = preImgObject.imgUrl;
+      } else {
+        message.info("您还没有上传图片，请先上传图片");
+        return false;
+      }
+    }
     console.log(cururl);
 
     return (
@@ -29,7 +34,7 @@ class imgModal extends Component {
         maskClosable
         width={
           this.props.preImgObject
-            ? this.props.preImgObject.img_width * 0.5 + 40
+            ? this.props.preImgObject.imgWidth * 0.5 + 40
             : this.state.oriWidth
         }
         footer={null}
@@ -40,7 +45,7 @@ class imgModal extends Component {
         <img
           style={{
             width: this.props.preImgObject
-              ? this.props.preImgObject.img_width * 0.5
+              ? this.props.preImgObject.imgWidth * 0.5
               : this.state.oriWidth
           }}
           src={cururl}

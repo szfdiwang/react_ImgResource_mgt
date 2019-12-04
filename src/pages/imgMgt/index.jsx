@@ -20,13 +20,53 @@ export default class Base extends React.Component {
     super(props); //调用父类的构造函数，固定写法
 
     this.state = {
+      websiteNameOptions: [],
+      pageOptions: [],
       loading: false,
+      imageId: "",
       searchList: [
-        { id: 0, name: "网站名", value: "", placeholder: "请输入网站名" },
-        { id: 1, name: "模块ID", value: "", placeholder: "请输入模块ID" },
-        { id: 2, name: "操作人", value: "", placeholder: "请输入操作人" },
-        { id: 3, name: "创建时间", value: "", placeholder: "请输入创建时间" },
-        { id: 4, name: "更新时间", value: "", placeholder: "请输入更新时间" }
+        {
+          id: 0,
+          name: "网站名",
+          key: "websiteName",
+          value: "",
+          placeholder: "请输入网站名"
+        },
+        {
+          id: 1,
+          name: "页面",
+          key: "pageName",
+          value: "",
+          placeholder: "请选择页面名称"
+        },
+        // {
+        //   id: 2,
+        //   name: "模块ID",
+        //   key: "moduleId",
+        //   value: "",
+        //   placeholder: "请输入模块ID"
+        // },
+        {
+          id: 2,
+          name: "操作人",
+          key: "operator",
+          value: "",
+          placeholder: "请输入操作人"
+        },
+        {
+          id: 3,
+          name: "创建日期",
+          key: "createTime",
+          value: "",
+          placeholder: "请输入创建时间"
+        },
+        {
+          id: 4,
+          name: "更新日期",
+          key: "updateTime",
+          value: "",
+          placeholder: "请输入更新时间"
+        }
       ],
       pagination: false,
       isEdit: false,
@@ -38,7 +78,7 @@ export default class Base extends React.Component {
       showUpload: false,
       pageSize: 10,
       curPage: 1,
-      totalNum: 50,
+      totalNum: 0,
       inputValue: "", // input中的值
       list: ["banner", "footer", "header"], //服务列表
       selectOptions: [
@@ -55,28 +95,44 @@ export default class Base extends React.Component {
       ],
       columns: [
         {
-          title: "ID",
+          title: "序号",
+          width: 60,
+          fixed: "left",
+          dataIndex: "index",
+          render: (text, record, index) => `${index + 1}`
+        },
+        {
+          title: "图片ID",
+          width: 100,
+          fixed: "left",
           dataIndex: "imgId",
           key: "imgId"
         },
         {
           title: "网站名称",
+          width: 100,
+          fixed: "left",
           dataIndex: "websiteName",
           key: "websiteName",
           render: text => <span>{text}</span>
         },
         {
           title: "页面",
+          fixed: "left",
+          width: 100,
           dataIndex: "pageName",
           key: "pageName"
         },
         {
           title: "模块ID",
+          fixed: "left",
+          width: 100,
           dataIndex: "moduleId",
           key: "moduleId"
         },
         {
           title: "环境",
+          width: 100,
           dataIndex: "environment",
           key: "environment",
           render: (text, row, index) => (
@@ -86,33 +142,39 @@ export default class Base extends React.Component {
         },
         {
           title: "图片大小",
+          width: 100,
           dataIndex: "imgSize",
           key: "imgSize"
         },
         {
           title: "图片尺寸",
+          width: 100,
           dataIndex: "pixel",
           key: "pixel",
           render: (text, row, index) => (
             // console.log(row)
             <span>
-              {row.imgWidth}x{row.imgLength}
+              {row.imgWidth}
+              {row.imgWidth ? "x" : ""}
+              {row.imgLength}
             </span>
           )
         },
         {
           title: "图片描述",
+          width: 200,
           dataIndex: "imgDesc",
           key: "imgDesc"
         },
         {
           title: "图片地址",
+          width: 300,
           dataIndex: "imgUrl",
           key: "imgUrl",
           onCell: () => {
             return {
               style: {
-                maxWidth: 250,
+                maxWidth: 150,
                 overflow: "hidden",
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
@@ -128,22 +190,26 @@ export default class Base extends React.Component {
         },
         {
           title: "操作人",
+          width: 100,
           dataIndex: "operator",
           key: "operator"
         },
         {
-          title: "创建时间",
+          title: "创建日期",
+          width: 150,
           dataIndex: "createTime",
           key: "createTime"
         },
         {
-          title: "更新时间",
+          title: "更新日期",
+          width: 150,
           dataIndex: "updateTime",
           key: "updateTime"
         },
         {
           title: "操作",
           key: "action",
+          fixed: "right",
           width: 200,
           render: (text, record) => (
             <div>
@@ -186,68 +252,50 @@ export default class Base extends React.Component {
           )
         }
       ],
-      tableData: [
-        {
-          imgId: "1",
-          websiteName: "PlatOn",
-          pageName: "home",
-          moduleId: "0102",
-          imgSize: "403kb",
-          imgWidth: "1920",
-          imgLength: "1200",
-          imgUrl:
-            "https://pics0.baidu.com/feed/a8773912b31bb05153ac8522a20c12b14bede0a8.jpeg?token=d3d290dca57f8740a40aa2e1cc819d0f&s=B50AAFF1CCD2E1F771A980820300E0D3",
-          imgDesc: "当无数据时,默认测试数据",
-          environment: "st",
-          createTime: "2019-11-09 12:00:00",
-          updateTime: "2019-11-09 12:00:00",
-          operator: "李四",
-          key: "1"
-        },
-        {
-          imgId: "2",
-          websiteName: "PlatOn",
-          pageName: "home",
-          moduleId: "0102",
-          imgSize: "403kb",
-          imgWidth: "1920",
-          imgLength: "1200",
-          imgUrl:
-            "https://pics0.baidu.com/feed/a8773912b31bb05153ac8522a20c12b14bede0a8.jpeg?token=d3d290dca57f8740a40aa2e1cc819d0f&s=B50AAFF1CCD2E1F771A980820300E0D3",
-          imgDesc: "当无数据时,默认测试数据",
-          environment: "st",
-          createTime: "2019-11-09 12:00:00",
-          updateTime: "2019-11-09 12:00:00",
-          operator: "李四",
-          key: "2"
-        },
-        {
-          imgId: "3",
-          websiteName: "PlatOn",
-          pageName: "home",
-          moduleId: "0102",
-          imgSize: "403kb",
-          imgWidth: "1920",
-          imgLength: "1200",
-          imgUrl:
-            "https://pics0.baidu.com/feed/a8773912b31bb05153ac8522a20c12b14bede0a8.jpeg?token=d3d290dca57f8740a40aa2e1cc819d0f&s=B50AAFF1CCD2E1F771A980820300E0D3",
-          imgDesc: "当无数据时,默认测试数据",
-          environment: "st",
-          createTime: "2019-11-09 12:00:00",
-          updateTime: "2019-11-09 12:00:00",
-          operator: "李四",
-          key: "3"
-        }
-      ]
+      tableData: []
     };
   }
   componentDidMount() {
     this.initTable();
+    this.initOptions();
   }
-  initTable() {
+  initOptions(type) {
     let data = {
-      websiteName: ""
+      websiteName: type
     };
+    imgApi.queryOptions(data).then(res => {
+      console.log(res);
+      this.setState({
+        // websiteNameOptions: [...res.data.data]
+      });
+    });
+  }
+  initTable(value) {
+    let data;
+    if (value) {
+      data = {
+        websiteName: value.websiteName,
+        pageName: value.pageName,
+        // moduleId:"",
+        oprator: value.oprator,
+        updateTime: value.updateTime,
+        createTime: value.createTime,
+        pageNum: this.state.curPage,
+        pageSize: this.state.pageSize
+      };
+    } else {
+      data = {
+        websiteName: "",
+        pageName: "",
+        // moduleId:"",
+        oprator: "",
+        updateTime: "",
+        createTime: "",
+        pageNum: this.state.curPage,
+        pageSize: this.state.pageSize
+      };
+    }
+
     this.setState({
       loading: true
     });
@@ -256,6 +304,7 @@ export default class Base extends React.Component {
       if (res.data.respCode === 0) {
         this.setState({
           tableData: [...res.data.data],
+          totalNum: res.data.totalCount,
           loading: false
         });
       } else {
@@ -290,7 +339,11 @@ export default class Base extends React.Component {
             />
           </Col> */}
           {/* <Skeleton loading={loading} active={true}> */}
-          <SearchBar searchList={this.state.searchList}></SearchBar>
+          <SearchBar
+            handleSearch={this.handleSearch.bind(this)}
+            searchList={this.state.searchList}
+            websiteNameOptions={this.state.websiteNameOptions}
+          ></SearchBar>
           {/* </Skeleton> */}
         </Row>
         {/* <Row className="search_btn">
@@ -327,6 +380,7 @@ export default class Base extends React.Component {
           })} */}
 
           <Table
+            scroll={{ x: 2000 }}
             {...this.state}
             size={"small"}
             columns={this.state.columns}
@@ -337,9 +391,11 @@ export default class Base extends React.Component {
             pageSizeOption={["10", "20", "30", "40"]}
             className="page_warp"
             size={"small"}
+            current={this.state.curPage}
             total={this.state.totalNum}
             // showSizeChanger
             showTotal={this.showTotal}
+            onChange={this.onPageChange.bind(this)}
             defaultPageSize={this.state.pageSize}
             onShowSizeChange={this.onShowSizeChange}
             defaultCurrent={1}
@@ -351,10 +407,12 @@ export default class Base extends React.Component {
           editObj={this.state.editObj}
           showAddList={this.state.showAddList}
           isEdit={this.state.isEdit}
+          websiteNameOptions={this.state.websiteNameOptions}
         ></NewForm>
         <UploadWin
           onClose={this.getChildStatus.bind(this)}
           showUpload={this.state.showUpload}
+          imageId={this.state.imageId}
           isEdit={this.state.isEdit}
         ></UploadWin>
         <PreImg
@@ -363,6 +421,27 @@ export default class Base extends React.Component {
           onClose={this.getPreImgStatus.bind(this)}
         ></PreImg>
       </Row>
+    );
+  }
+  onPageChange(page, pageSize) {
+    //切换page
+    this.setState(
+      {
+        curPage: page
+      },
+      () => {
+        this.initTable();
+      }
+    );
+  }
+  handleSearch(value) {
+    this.setState(
+      {
+        curPage: 1
+      },
+      () => {
+        this.initTable(value);
+      }
     );
   }
   getPreImgStatus(value) {
@@ -407,7 +486,8 @@ export default class Base extends React.Component {
     //调用弹出窗口
     this.setState({
       showAddList: true,
-      isEdit: false
+      isEdit: false,
+      editObj: {}
     });
   }
   getFormStatus(value, bol) {
@@ -418,14 +498,18 @@ export default class Base extends React.Component {
       this.initTable();
     }
   }
-  getChildStatus(value) {
+  getChildStatus(value, boolean) {
     this.setState({
       showUpload: value
     });
+    if (boolean) {
+      this.initTable();
+    }
   }
   urlAction(t, r) {
     this.setState({
-      showUpload: true
+      showUpload: true,
+      imageId: r.imgId
     });
   }
   showTotal(total) {

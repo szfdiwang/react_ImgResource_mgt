@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import { Menu, Icon } from "antd";
 import "./index.scss";
 import MenuConfig from "./../../config/menuConfig";
 
 const { SubMenu } = Menu;
 
-export default class Nav extends Component {
+class Nav extends Component {
   state = {
     currentKey: "/imgMgt",
     oldKey: "/imgMgt"
@@ -49,12 +49,13 @@ export default class Nav extends Component {
     });
   };
   render() {
+    const path = this.props.location.pathname;
     return (
       <Menu
         className="nav-box"
         onClick={this.handleClick}
         defaultSelectedKeys={["/imgMgt"]}
-        selectedKeys={[this.state.currentKey]}
+        selectedKeys={[path]}
       >
         {this.state.menuTreeNode}
         {/* menu的渲染在这里调用 */}
@@ -62,3 +63,5 @@ export default class Nav extends Component {
     );
   }
 }
+
+export default withRouter(Nav);

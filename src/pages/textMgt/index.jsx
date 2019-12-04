@@ -1,29 +1,84 @@
 import React from "react";
-
-import { Table, Button, Row, Divider, Pagination } from "antd";
+import {
+  Table,
+  Button,
+  Row,
+  Divider,
+  Pagination,
+  Popconfirm,
+  message,
+  Tooltip
+} from "antd";
 import SearchBar from "../../components/opratorBar/index";
 import UploadWin from "../../components/Upload/index";
+import NewTextForm from "../../components/NewTextForm/index";
+import PreImg from "../../components/preImg/index";
+import imgApi from "../../api/index";
+
 export default class Base extends React.Component {
   constructor(props) {
     super(props); //调用父类的构造函数，固定写法
 
     this.state = {
+      websiteNameOptions: [],
+      pageOptions: [],
+      loading: false,
+      imageId: "",
       searchList: [
-        { id: 0, name: "网站名", value: "", placeholder: "请输入网站名" },
-        { id: 1, name: "模块ID", value: "", placeholder: "请输入模块ID" },
-        { id: 2, name: "操作人", value: "", placeholder: "请输入操作人" },
-        { id: 3, name: "创建时间", value: "", placeholder: "请输入创建时间" },
-        { id: 4, name: "更新时间", value: "", placeholder: "请输入更新时间" }
+        {
+          id: 0,
+          name: "网站名",
+          key: "websiteName",
+          value: "",
+          placeholder: "请输入网站名"
+        },
+        {
+          id: 1,
+          name: "页面",
+          key: "pageName",
+          value: "",
+          placeholder: "请选择页面名称"
+        },
+        // {
+        //   id: 2,
+        //   name: "模块ID",
+        //   key: "moduleId",
+        //   value: "",
+        //   placeholder: "请输入模块ID"
+        // },
+        {
+          id: 2,
+          name: "操作人",
+          key: "operator",
+          value: "",
+          placeholder: "请输入操作人"
+        },
+        {
+          id: 3,
+          name: "创建日期",
+          key: "createTime",
+          value: "",
+          placeholder: "请输入创建时间"
+        },
+        {
+          id: 4,
+          name: "更新日期",
+          key: "updateTime",
+          value: "",
+          placeholder: "请输入更新时间"
+        }
       ],
       pagination: false,
+      isEdit: false,
       //    {
       //     total: 50,
       //     defaultCurrent: 1
       //   },
+      showAddList: false,
       showUpload: false,
       pageSize: 10,
       curPage: 1,
-      totalNum: 50,
+      totalNum: 0,
       inputValue: "", // input中的值
       list: ["banner", "footer", "header"], //服务列表
       selectOptions: [
@@ -40,103 +95,239 @@ export default class Base extends React.Component {
       ],
       columns: [
         {
-          title: "ID",
-          dataIndex: "id",
-          key: "ID"
+          title: "序号",
+          width: 60,
+          dataIndex: "index",
+          render: (text, record, index) => `${index + 1}`
+        },
+        {
+          title: "文案ID",
+          width: 100,
+          dataIndex: "txtId",
+          key: "txtId"
         },
         {
           title: "网站名称",
-          dataIndex: "project",
-          key: "project",
+          width: 100,
+          dataIndex: "websiteName",
+          key: "websiteName",
           render: text => <span>{text}</span>
         },
         {
           title: "页面",
-          dataIndex: "page",
-          key: "page"
+          width: 100,
+          dataIndex: "pageName",
+          key: "pageName"
         },
         {
           title: "模块ID",
-          dataIndex: "module",
-          key: "module"
+          width: 100,
+          dataIndex: "moduleId",
+          key: "moduleId"
         },
         {
-          title: "图片大小",
-          dataIndex: "size",
-          key: "size"
+          title: "文案内容",
+          width: 200,
+          dataIndex: "txtContent",
+          key: "txtContent",
+          onCell: () => {
+            return {
+              style: {
+                maxWidth: 200,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                cursor: "pointer"
+              }
+            };
+          },
+          render: text => (
+            <Tooltip placement="topLeft" title={text}>
+              <span>{text}</span>
+            </Tooltip>
+          )
         },
         {
-          title: "图片尺寸",
-          dataIndex: "pixel",
-          key: "pixel"
+          title: "环境",
+          width: 100,
+          dataIndex: "environment",
+          key: "environment",
+          render: (text, row, index) => (
+            // const con = row.environment === 0 ? "生产" : "测试";
+            <span>{row.environment === 0 ? "生产" : "测试"}</span>
+          )
         },
         {
-          title: "图片地址",
-          dataIndex: "url",
-          key: "url",
-          render: text => <span>{text}</span>
+          title: "文案描述",
+          width: 150,
+          dataIndex: "txtDesc",
+          key: "txtDesc",
+          onCell: () => {
+            return {
+              style: {
+                maxWidth: 150,
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                cursor: "pointer"
+              }
+            };
+          },
+          render: text => (
+            <Tooltip placement="topLeft" title={text}>
+              <span>{text}</span>
+            </Tooltip>
+          )
         },
+        // {
+        //   title: "文案地址",
+        //   width: 300,
+        //   dataIndex: "textUrl",
+        //   key: "textUrl",
+        //   onCell: () => {
+        //     return {
+        //       style: {
+        //         maxWidth: 150,
+        //         overflow: "hidden",
+        //         whiteSpace: "nowrap",
+        //         textOverflow: "ellipsis",
+        //         cursor: "pointer"
+        //       }
+        //     };
+        //   },
+        //   render: text => (
+        //     <Tooltip placement="topLeft" title={text}>
+        //       <span>{text}</span>
+        //     </Tooltip>
+        //   )
+        // },
         {
           title: "操作人",
-          dataIndex: "oprator",
-          key: "oprator"
+          width: 100,
+          dataIndex: "operator",
+          key: "operator"
         },
         {
-          title: "创建时间",
-          dataIndex: "createAt",
-          key: "createAt"
+          title: "创建日期",
+          width: 150,
+          dataIndex: "createTime",
+          key: "createTime"
         },
         {
-          title: "更新时间",
-          dataIndex: "updateAt",
-          key: "updateAt"
+          title: "更新日期",
+          width: 150,
+          dataIndex: "updateTime",
+          key: "updateTime"
         },
         {
           title: "操作",
           key: "action",
+          width: 100,
           render: (text, record) => (
             <div>
               <span
                 className={"btn pointer"}
+                onClick={this.editFn.bind(this, text, record)}
+              >
+                编辑
+              </span>
+
+              <Popconfirm
+                arrowPointAtCenter
+                title="删除后将无法恢复,请确认"
+                onConfirm={this.comfirmDelFn.bind(this, record)}
+                onCancel={this.cancleFirmFn.bind(this)}
+                okText="确认"
+                cancelText="取消"
+              >
+                <span
+                  className={"ml10 btn pointer"}
+                  onClick={this.deleteFn.bind(this)}
+                >
+                  删除
+                </span>
+              </Popconfirm>
+
+              {/* <span
+                className={"ml10 btn pointer"}
                 onClick={this.urlAction.bind(this, text, record)}
               >
-                替换
+                上传
               </span>
-              <span className={"ml10 btn pointer"}>预览</span>
+              <span
+                className={"ml10 btn pointer"}
+                onClick={this.showPreImg.bind(this, text, record)}
+              >
+                预览
+              </span> */}
             </div>
           )
         }
       ],
-      tableData: [
-        {
-          id: "1",
-          project: "lattice",
-          page: "home",
-          module: "banner",
-          size: "120kb",
-          url: "www.sina.com",
-          pixel: "120x20",
-          createAt: "2019-11-09 12:00:00",
-          updateAt: "2019-11-09 12:00:00",
-          createby: ""
-        },
-        {
-          id: "2",
-          project: "platon",
-          page: "home",
-          module: "banner",
-          size: "240kb",
-          url: "www.aliyun.com",
-          pixel: "268x128",
-          createAt: "2019-11-09 12:00:00",
-          updateAt: "2019-11-09 12:00:00",
-          createby: ""
-        }
-      ]
+      tableData: []
     };
   }
-  addFn() {}
+  componentDidMount() {
+    this.initTable();
+    this.initOptions();
+  }
+  initOptions(type) {
+    let data = {
+      websiteName: type
+    };
+    imgApi.queryOptions(data).then(res => {
+      console.log(res);
+      this.setState({
+        websiteNameOptions: [...res.data.data]
+      });
+    });
+  }
+  initTable(value) {
+    let data;
+    if (value) {
+      data = {
+        websiteName: value.websiteName,
+        pageName: value.pageName,
+        // moduleId:"",
+        oprator: value.oprator,
+        updateTime: value.updateTime,
+        createTime: value.createTime,
+        pageNum: this.state.curPage,
+        pageSize: this.state.pageSize
+      };
+    } else {
+      data = {
+        websiteName: "",
+        pageName: "",
+        // moduleId:"",
+        oprator: "",
+        updateTime: "",
+        createTime: "",
+        pageNum: this.state.curPage,
+        pageSize: this.state.pageSize
+      };
+    }
+
+    this.setState({
+      loading: true
+    });
+    imgApi.queryTxtList(data).then(res => {
+      console.log(res);
+      if (res.data.respCode === 0) {
+        this.setState({
+          tableData: [...res.data.data],
+          totalNum: res.data.totalCount,
+          loading: false
+        });
+      } else {
+        this.setState({
+          loading: false
+        });
+      }
+    });
+  }
   render(h) {
+    // const { loading } = this.state;
     return (
       <Row className="inside_box">
         <Row className="search_bar">
@@ -159,7 +350,13 @@ export default class Base extends React.Component {
               onChange={this.inputChange.bind(this)}
             />
           </Col> */}
-          <SearchBar searchList={this.state.searchList}></SearchBar>
+          {/* <Skeleton loading={loading} active={true}> */}
+          <SearchBar
+            handleSearch={this.handleSearch.bind(this)}
+            searchList={this.state.searchList}
+            websiteNameOptions={this.state.websiteNameOptions}
+          ></SearchBar>
+          {/* </Skeleton> */}
         </Row>
         {/* <Row className="search_btn">
           <Col>
@@ -172,6 +369,7 @@ export default class Base extends React.Component {
           <Divider className="divider" />
         </Row>
         <Row className="table_warp">
+          {/* <Skeleton loading={loading} title={true} active={true}> */}
           <Button
             type="primary"
             onClick={this.addFn.bind(this)}
@@ -192,40 +390,134 @@ export default class Base extends React.Component {
               </Col>
             );
           })} */}
+
           <Table
             {...this.state}
             size={"small"}
             columns={this.state.columns}
             dataSource={this.state.tableData}
+            rowKey={(r, i) => i}
           />
           <Pagination
             pageSizeOption={["10", "20", "30", "40"]}
             className="page_warp"
             size={"small"}
+            current={this.state.curPage}
             total={this.state.totalNum}
             // showSizeChanger
             showTotal={this.showTotal}
+            onChange={this.onPageChange.bind(this)}
             defaultPageSize={this.state.pageSize}
             onShowSizeChange={this.onShowSizeChange}
             defaultCurrent={1}
           />
+          {/* </Skeleton> */}
         </Row>
+        <NewTextForm
+          onClose={this.getFormStatus.bind(this)}
+          editObj={this.state.editObj}
+          showAddList={this.state.showAddList}
+          isEdit={this.state.isEdit}
+          websiteNameOptions={this.state.websiteNameOptions}
+        ></NewTextForm>
         <UploadWin
           onClose={this.getChildStatus.bind(this)}
           showUpload={this.state.showUpload}
+          imageId={this.state.imageId}
+          isEdit={this.state.isEdit}
         ></UploadWin>
+        <PreImg
+          showPreImg={this.state.showPreImg}
+          preImgObject={this.state.preImgObject}
+          onClose={this.getPreImgStatus.bind(this)}
+        ></PreImg>
       </Row>
     );
   }
+  onPageChange(page, pageSize) {
+    //切换page
+    this.setState(
+      {
+        curPage: page
+      },
+      () => {
+        this.initTable();
+      }
+    );
+  }
+  handleSearch(value) {
+    this.setState(
+      {
+        curPage: 1
+      },
+      () => {
+        this.initTable(value);
+      }
+    );
+  }
+  getPreImgStatus(value) {
+    this.setState({
+      showPreImg: value
+    });
+  }
+  showPreImg(text, record) {
+    console.log(record);
+    this.setState({
+      showPreImg: true,
+      preImgObject: record
+    });
+  }
+  comfirmDelFn(v) {
+    let that = this;
+    imgApi.deleteText(v.txtId).then(res => {
+      if (res.data.respCode === 0) {
+        message.success("删除成功");
+        that.initTable();
+      }
+    });
 
-  getChildStatus(value) {
+    //TODO 删除接口
+  }
+  cancleFirmFn(e) {
+    console.log(e);
+    message.warning("您已取消删除");
+  }
+  deleteFn() {}
+  editFn(text, record) {
+    this.setState({
+      showAddList: true,
+      isEdit: true,
+      editObj: record
+    });
+  }
+  addFn() {
+    //调用弹出窗口
+    this.setState({
+      showAddList: true,
+      isEdit: false,
+      editObj: {}
+    });
+  }
+  getFormStatus(value, bol) {
+    this.setState({
+      showAddList: value
+    });
+    if (bol) {
+      this.initTable();
+    }
+  }
+  getChildStatus(value, boolean) {
     this.setState({
       showUpload: value
     });
+    if (boolean) {
+      this.initTable();
+    }
   }
   urlAction(t, r) {
     this.setState({
-      showUpload: true
+      showUpload: true,
+      imageId: r.imgId
     });
   }
   showTotal(total) {

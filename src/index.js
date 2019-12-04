@@ -16,6 +16,8 @@ function setHtmlFontSize() {
 }
 setHtmlFontSize();
 
+console.log(process.env.NODE_ENV);
+
 ReactDOM.render(<Router />, document.getElementById("root"));
 
 serviceWorker.unregister();

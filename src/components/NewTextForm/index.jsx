@@ -17,35 +17,35 @@ class newForm extends Component {
       pageName: obj.pageName,
       moduleId: obj.moduleId,
       environment: obj.environment,
-      imgDesc: obj.imgDesc,
+      txtContent: obj.txtContent,
+      txtDesc: obj.txtDesc,
       operator: "黑猫警长" //TODO 获取session中登录人信息
     };
     this.props.form.validateFields((err, values) => {
-      if (!err) {
-        if (this.props.isEdit) {
-          data.imgId = this.props.editObj.imgId;
-          imgApi.editImg(data).then(res => {
-            console.log(res);
-            if (res.data.respCode === 0) {
-              message.success("修改数据成功");
-              this.props.form.resetFields();
-              //刷新父页面 子页面数据清空 子页面表单关闭
-              this.props.onClose(value, true);
-            }
-          });
-        } else {
-          imgApi.addImg(data).then(res => {
-            console.log(res);
-            if (res.data.respCode === 0) {
-              message.success("新增数据成功");
-              this.props.form.resetFields();
-              //刷新父页面 子页面数据清空 子页面表单关闭
-              this.props.onClose(value, true);
-            }
-          });
-        }
-      }
+      console.log(values);
     });
+    if (this.props.isEdit) {
+      data.txtId = this.props.editObj.txtId;
+      imgApi.editText(data).then(res => {
+        console.log(res);
+        if (res.data.respCode === 0) {
+          message.success("修改数据成功");
+          this.props.form.resetFields();
+          //刷新父页面 子页面数据清空 子页面表单关闭
+          this.props.onClose(value, true);
+        }
+      });
+    } else {
+      imgApi.addText(data).then(res => {
+        console.log(res);
+        if (res.data.respCode === 0) {
+          message.success("新增数据成功");
+          this.props.form.resetFields();
+          //刷新父页面 子页面数据清空 子页面表单关闭
+          this.props.onClose(value, true);
+        }
+      });
+    }
   }
   handleWebSiteChange(value) {
     let data = {
@@ -132,8 +132,14 @@ class newForm extends Component {
               </Select>
             )}
           </Form.Item>
-          <Form.Item label="图片描述">
-            {getFieldDecorator("imgDesc", { initialValue: "" })(
+          <Form.Item label="文案内容">
+            {getFieldDecorator("txtContent", {
+              initialValue: "",
+              rules: [{ required: true, message: "请输入文案内容" }]
+            })(<TextArea rows={3} />)}
+          </Form.Item>
+          <Form.Item label="文案描述">
+            {getFieldDecorator("txtDesc", { initialValue: "" })(
               <TextArea rows={3} />
             )}
           </Form.Item>
@@ -162,8 +168,11 @@ const NewForm = Form.create({
           environment: Form.createFormField({
             value: props.editObj.environment
           }),
-          imgDesc: Form.createFormField({
-            value: props.editObj.imgDesc
+          txtContent: Form.createFormField({
+            value: props.editObj.txtContent
+          }),
+          txtDesc: Form.createFormField({
+            value: props.editObj.txtDesc
           })
         }
       : {};
