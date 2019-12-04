@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import imgMgt from "./pages/imgMgt/index.jsx";
 import textMgt from "./pages/textMgt/index.jsx";
 import Login from "./pages/login/index.jsx";
@@ -8,7 +8,7 @@ import App from "./App";
 export default class ERouter extends React.Component {
   render(h) {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <Switch>
           <Route exact path="/login" exact component={Login}></Route>
           <Redirect exact from="/" to="/login" />
@@ -22,7 +22,7 @@ export default class ERouter extends React.Component {
             </Switch>
           </App>
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }
