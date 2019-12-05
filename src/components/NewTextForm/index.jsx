@@ -19,7 +19,7 @@ class newForm extends Component {
       environment: obj.environment,
       txtContent: obj.txtContent,
       txtDesc: obj.txtDesc,
-      operator: "黑猫警长" //TODO 获取session中登录人信息
+      operator: localStorage.userName //TODO 获取session中登录人信息
     };
     this.props.form.validateFields((err, values) => {
       console.log(values);

@@ -42,5 +42,18 @@ export default {
   },
   logout(data) {
     return axios.get("/cms-server/user/logout", data);
+  },
+  /**===========================以下为字典项接口========================= */
+  queryDict(data) {
+    return axios.post("/cms-server/dict/list", data);
+  },
+  addDict(data) {
+    return axios.post("/cms-server/dict/add", data);
+  },
+  editDict(data) {
+    return axios.post("/cms-server/dict/edit", data);
+  },
+  deleteDict(data) {
+    return axios.get(`/cms-server/dict/delete/${data}`);
   }
 };

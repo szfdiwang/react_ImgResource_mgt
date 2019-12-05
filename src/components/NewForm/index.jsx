@@ -18,7 +18,7 @@ class newForm extends Component {
       moduleId: obj.moduleId,
       environment: obj.environment,
       imgDesc: obj.imgDesc,
-      operator: "黑猫警长" //TODO 获取session中登录人信息
+      operator: localStorage.userName //TODO 获取session中登录人信息
     };
     this.props.form.validateFields((err, values) => {
       if (!err) {
