@@ -7,7 +7,6 @@ import {
   Pagination,
   Popconfirm,
   message,
-  Tooltip
 } from "antd";
 import imgApi from "../../api/index";
 import NewDictForm from "../../components/NewDictForm/index";

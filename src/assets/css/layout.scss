@@ -28,6 +28,9 @@
         .inputWidth {
           width: 300px;
         }
+        .ant-form-item-label {
+          text-align: left;
+        }
         @media only screen and(min-width:1024px) and(max-width: 1366px) {
           .search_input {
             height: 36px;

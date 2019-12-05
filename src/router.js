@@ -1,15 +1,23 @@
 import React from "react";
-import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
+import {
+  HashRouter,
+  BrowserRouter,
+  Router,
+  Route,
+  Switch,
+  Redirect
+} from "react-router-dom";
 import imgMgt from "./pages/imgMgt/index.jsx";
 import textMgt from "./pages/textMgt/index.jsx";
 import dictMgt from "./pages/dictMgt/index.jsx";
 import Login from "./pages/login/index.jsx";
 import App from "./App";
+import { history } from "./utils/RouterHelper";
 
 export default class ERouter extends React.Component {
   render(h) {
     return (
-      <HashRouter>
+      <Router history={history}>
         <Switch>
           <Route exact path="/login" exact component={Login}></Route>
           <Redirect exact from="/" to="/login" />
@@ -24,7 +32,7 @@ export default class ERouter extends React.Component {
             </Switch>
           </App>
         </Switch>
-      </HashRouter>
+      </Router>
     );
   }
 }
